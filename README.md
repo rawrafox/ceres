@@ -1,5 +1,7 @@
 # SafeStructure #
 
+[![Build Status](https://travis-ci.org/rawrasaur/safe_structure.svg?branch=master)](https://travis-ci.org/rawrasaur/safe_structure)
+
 SafeStructure is a gem that allows you to create mostly immutable type safe classes in Ruby. That's neat and catches a lot of bugs if you're sloppy like me.
 
 ## Installation
