@@ -50,15 +50,15 @@ class SafeStructure
       value.freeze if attribute[:freeze]
 
       if attribute[:type] && !value.is_a?(attribute[:type])
-        raise ArgumentError, "#{value.inspect} is not of type #{attribute[:type].name}"
+        raise ArgumentError, "attribute #{attribute[:name]} (#{value.inspect}) is not of type #{attribute[:type].name}"
       end
 
       if attribute[:enum] && !attribute[:enum].include?(value)
-        raise ArgumentError, "#{value.inspect} is not one of #{attribute[:enum].map(&:inspect).join(', ')}"
+        raise ArgumentError, "attribute #{attribute[:name]} (#{value.inspect}) is not one of #{attribute[:enum].map(&:inspect).join(', ')}"
       end
 
       if attribute[:element_type] && !value.all? { |x| x.is_a?(attribute[:element_type]) }
-        raise ArgumentError, "#{value.inspect} has elements of other type than #{attribute[:element_type]}"
+        raise ArgumentError, "attribute #{attribute[:name]} (#{value.inspect}) has elements of other type than #{attribute[:element_type]}"
       end
 
       @safe_structure_values[name] = value
