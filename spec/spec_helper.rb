@@ -5,7 +5,7 @@ require 'simplecov'
 
 SimpleCov.start
 
-require 'safe_structure'
+require 'ceres'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|

@@ -1,16 +1,16 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'safe_structure/version'
+require 'ceres/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'safe_structure'
-  spec.version       = SafeStructure::VERSION
+  spec.name          = 'ceres'
+  spec.version       = Ceres::VERSION
   spec.authors       = ['Aurora']
   spec.email         = ['aurora@aventine.se']
 
-  spec.summary       = %q{A typesafe (mostly immutable) structure type.}
-  spec.homepage      = 'https://github.com/rawrasaur/safe_structure'
+  spec.summary       = %q{An extension to the ruby standard library, with (mostly immutable) structured types.}
+  spec.homepage      = 'https://github.com/rawrasaur/ceres'
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
