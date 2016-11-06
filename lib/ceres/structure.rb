@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Ceres
   class Structure
     def initialize(values = {})
