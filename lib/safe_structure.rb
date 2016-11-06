@@ -1,6 +1,6 @@
-class SafeStructure
-  VERSION = '0.1.0'
+require 'safe_structure/version'
 
+class SafeStructure
   def initialize(values = {})
     @safe_structure_values = {}
 
