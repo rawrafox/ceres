@@ -8,6 +8,8 @@ module SafeStructureSpec
   class B < SafeStructure
     attribute :a, type: String
     attribute :b, type: Fixnum, default: 1
+
+    equality :a
   end
 
   class C < B
@@ -98,6 +100,32 @@ RSpec.describe SafeStructure do
 
     it 'raises InvalidArgument if value is not in enum' do
       expect { SafeStructureSpec::D.new(a: :d) }.to raise_error(ArgumentError)
+    end
+  end
+
+  context 'equality' do
+    it 'compares equal if the same class' do
+      a = SafeStructureSpec::B.new(a: 'a')
+      b = SafeStructureSpec::B.new(a: 'a')
+
+      expect(a).to eq(b)
+      expect(a.hash).to eq(b.hash)
+    end
+
+    it 'does not compare equal if different classes' do
+      a = SafeStructureSpec::B.new(a: 'a')
+      b = SafeStructureSpec::C.new(a: 'a')
+
+      expect(a).not_to eq(b)
+      expect(a.hash).not_to eq(b.hash)
+    end
+
+    it 'compares only the attributes defined' do
+      a = SafeStructureSpec::C.new(a: 'a')
+      b = SafeStructureSpec::C.new(a: 'a', b: 4)
+
+      expect(a).to eq(b)
+      expect(a.hash).to eq(b.hash)
     end
   end
 

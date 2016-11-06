@@ -97,4 +97,30 @@ class SafeStructure
       end
     end
   end
+
+  def self.equality(*attributes, eq: true, eql: true, hash: true)
+    raise ArgumentError, 'need to provide at least one attribute' unless attributes.count > 0
+
+    if eq
+      define_method(:==) do |other|
+        return false unless self.class == other.class
+
+        attributes.all? { |attribute| self.public_send(attribute) == other.public_send(attribute) }
+      end
+    end
+    
+    if eql
+      define_method(:eql?) do |other|
+        return false unless self.class == other.class
+
+        attributes.all? { |attribute| self.public_send(attribute) == other.public_send(attribute) }
+      end
+    end
+
+    if hash
+      define_method(:hash) do
+       self.class.hash ^ attributes.map(&:hash).reduce(&:'^')
+      end
+    end
+  end
 end
