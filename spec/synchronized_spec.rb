@@ -8,7 +8,7 @@ module SynchronizedSpec
       @q1, @q2 = q1, q2
     end
 
-    def a
+    synchronized def a
       @q1.push(:a)
       @q2.pop
     end
@@ -17,8 +17,6 @@ module SynchronizedSpec
       @q1.push(:b)
       @q2.pop
     end
-
-    synchronized :a
   end
 end
 
