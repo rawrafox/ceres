@@ -3,6 +3,8 @@ require 'spec_helper'
 module StructureSpec
   class A < Ceres::Structure
     attribute :a, type: String
+
+    order :a
   end
 
   class B < Ceres::Structure
@@ -10,6 +12,7 @@ module StructureSpec
     attribute :b, type: Fixnum, default: 1
 
     equality :a
+    order :b
   end
 
   class C < B
@@ -152,6 +155,26 @@ RSpec.describe Ceres::Structure do
 
     it 'raises InvalidArgument if attribute is not optional' do
       expect { StructureSpec::A.new(a: nil) }.to raise_error(ArgumentError)
+    end
+  end
+
+  context 'order' do
+    it 'sorts according to order' do
+      a = StructureSpec::B.new(a: 'a', b: 1)
+      b = StructureSpec::B.new(a: 'b', b: 2)
+
+      expect(a > b).to be(false)
+      expect(a < b).to be(true)
+      expect(a <=> b).to be(-1)
+      expect(b <=> a).to be(1)
+    end
+
+    it 'implements `==` when ordered' do
+      a = StructureSpec::A.new(a: 'a')
+      b = StructureSpec::A.new(a: 'b')
+
+      expect(a == a).to be(true)
+      expect(a != b).to be(true)
     end
   end
 

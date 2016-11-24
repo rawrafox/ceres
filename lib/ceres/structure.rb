@@ -20,6 +20,8 @@ module Ceres
 
     def self.inherited(base)
       base.instance_variable_set(:@safe_structure_attributes, {})
+      base.instance_variable_set(:@safe_structure_finalized, false)
+      base.instance_variable_set(:@safe_structure_ordered, false)
     end
 
     def self.define_attribute(name, kind, options)
@@ -99,17 +101,19 @@ module Ceres
       end
     end
 
-    def self.equality(*attributes, eq: true, eql: true, hash: true)
+    def self.equality(*attributes, eq: nil, eql: true, hash: true)
       raise ArgumentError, 'need to provide at least one attribute' unless attributes.count > 0
 
-      if eq
+      if eq && @safe_structure_ordered
+        raise ArgumentError, 'asking to overwrite `==` from order, probably not what you want'
+      elsif eq != false
         define_method(:==) do |other|
           return false unless self.class == other.class
 
           attributes.all? { |attribute| self.public_send(attribute) == other.public_send(attribute) }
         end
       end
-    
+
       if eql
         define_method(:eql?) do |other|
           return false unless self.class == other.class
@@ -123,6 +127,23 @@ module Ceres
          self.class.hash ^ attributes.map(&:hash).reduce(&:'^')
         end
       end
+    end
+
+    def self.order(*attributes)
+      raise ArgumentError, 'need to provide at least one attribute' unless attributes.count > 0
+
+      @safe_structure_ordered = true
+
+      define_method(:<=>) do |other|
+        raise ArgumentError, 'not of the same class' unless self.class == other.class
+
+        self_attributes = attributes.map { |attribute| self.public_send(attribute) }
+        other_attributes = attributes.map { |attribute| other.public_send(attribute) }
+
+        self_attributes <=> other_attributes
+      end
+
+      include Comparable
     end
   end
 end
