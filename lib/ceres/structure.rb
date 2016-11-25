@@ -18,18 +18,16 @@ module Ceres
       end
     end
 
-    def self.inherited(base)
-      base.instance_variable_set(:@safe_structure_attributes, {})
-      base.instance_variable_set(:@safe_structure_finalized, false)
-      base.instance_variable_set(:@safe_structure_ordered, false)
-    end
-
     def self.define_attribute(name, kind, options)
       # TODO: Remove this requirement by invalidating
       #       @safe_structure_attributes of all subclasses
+      @safe_structure_finalized ||= false
+
       if @safe_structure_finalized
         raise ArgumentError, 'safe structure is already finalized'
       end
+
+      @safe_structure_attributes ||= {}
 
       if @safe_structure_attributes.has_key?(name)
         raise ArgumentError, 'attribute already defined'
@@ -81,6 +79,7 @@ module Ceres
     def self.attributes
       @safe_structure_cached_attributes ||= begin
         @safe_structure_finalized = true
+        @safe_structure_attributes ||= {}
 
         superclass = self.superclass
 
@@ -103,6 +102,8 @@ module Ceres
 
     def self.equality(*attributes, eq: nil, eql: true, hash: true)
       raise ArgumentError, 'need to provide at least one attribute' unless attributes.count > 0
+
+      @safe_structure_ordered ||= false
 
       if eq && @safe_structure_ordered
         raise ArgumentError, 'asking to overwrite `==` from order, probably not what you want'
