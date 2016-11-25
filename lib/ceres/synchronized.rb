@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'ceres/module'
+require "ceres/module"
 
 module Ceres
   module Synchronized

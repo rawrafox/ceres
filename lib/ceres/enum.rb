@@ -1,4 +1,6 @@
-require 'ceres/structure'
+# frozen_string_literal: true
+
+require "ceres/structure"
 
 module Ceres
   class Enum < Ceres::Structure

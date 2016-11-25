@@ -1,11 +1,14 @@
-require 'spec_helper'
+# frozen_string_literal: true
+
+require "spec_helper"
 
 module SynchronizedSpec
   class A
     include Ceres::Synchronized
 
     def initialize(q1, q2)
-      @q1, @q2 = q1, q2
+      @q1 = q1
+      @q2 = q2
     end
 
     synchronized def a
@@ -22,12 +25,13 @@ end
 
 RSpec.describe Ceres::Module do
   before do
-    @in, @out = Queue.new, Queue.new
-    
+    @in = Queue.new
+    @out = Queue.new
+
     @o = SynchronizedSpec::A.new(@out, @in)
   end
 
-  it 'takes the lock in a synchronized method' do
+  it "takes the lock in a synchronized method" do
     expect(@o.mutex.locked?).to_not be(true)
     t = Thread.new { @o.a }
     expect(@out.pop).to be(:a)
@@ -37,7 +41,7 @@ RSpec.describe Ceres::Module do
     expect(@o.mutex.locked?).to_not be(true)
   end
 
-  it 'does not take the lock in an unsynchronized method' do
+  it "does not take the lock in an unsynchronized method" do
     expect(@o.mutex.locked?).to_not be(true)
     t = Thread.new { @o.b }
     expect(@out.pop).to be(:b)

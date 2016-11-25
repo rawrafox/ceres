@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'ceres/structure'
+require "ceres/structure"
 
 module Ceres
   class Environment < Ceres::Structure
@@ -9,24 +9,24 @@ module Ceres
     equality :name, eq: false
 
     def self.current(environment: ENV)
-      return new(name: environment['CERES_ENV']) if environment.key?('CERES_ENV')
+      return new(name: environment["CERES_ENV"]) if environment.key?("CERES_ENV")
 
       if defined?(Rails)
         new(name: Rails.env.to_s)
       else
-        return new(name: environment['RACK_ENV']) if environment.key?('RACK_ENV')
-        return new(name: environment['RAILS_ENV']) if environment.key?('RAILS_ENV')
+        return new(name: environment["RACK_ENV"]) if environment.key?("RACK_ENV")
+        return new(name: environment["RAILS_ENV"]) if environment.key?("RAILS_ENV")
 
-        new(name: 'development')
+        new(name: "development")
       end
     end
 
-    def respond_to_missing?(method, private = false)
-      method[-1] == '?'
+    def respond_to_missing?(method, _ = false)
+      method[-1] == "?"
     end
 
     def method_missing(method, *arguments)
-      if method[-1] == '?'
+      if method[-1] == "?"
         self.name == method[0 .. -2]
       else
         super

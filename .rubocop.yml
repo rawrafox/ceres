@@ -1,0 +1,94 @@
+AllCops:
+  DisplayCopNames: true
+  TargetRubyVersion: 2.1
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+  
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Lint/AssignmentInCondition:
+  AllowSafeAssignment: false
+
+Lint/BlockAlignment:
+  AlignWith: start_of_line
+
+Lint/EndAlignment:
+  AlignWith: start_of_line
+
+Metrics/LineLength:
+  Max: 100
+
+# TODO: Reduce this to maybe 25 in time, working down to 20
+Metrics/MethodLength: 
+  Max: 35
+
+Metrics/ParameterLists:
+  Max: 10
+
+Style/CaseIndentation:
+  IndentWhenRelativeTo: end
+
+Metrics/ClassLength:
+  Max: 1500
+
+Style/CollectionMethods:
+  Enabled: true
+
+# TODO: This should be enabled
+Style/Documentation:
+  Enabled: false
+
+Style/ElseAlignment:
+  Enabled: false
+
+Style/EndAlignment:
+  Enabled: true
+  AlignWith: variable
+
+Style/FormatString:
+  EnforcedStyle: percent
+
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: always
+
+# I like this in theory, but sometimes it weirds out
+Style/GuardClause:
+  Enabled: false
+
+Style/HashSyntax:
+  EnforcedStyle: ruby19_no_mixed_keys
+
+Style/MultilineOperationIndentation:
+  Enabled: false
+
+Style/ParenthesesAroundCondition:
+  AllowSafeAssignment: false
+
+Style/RaiseArgs:
+  Enabled: false
+
+Style/RedundantReturn:
+  Enabled: false
+
+Style/RedundantSelf:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/SignalException:
+  EnforcedStyle: only_raise
+
+Style/SpaceAroundEqualsInParameterDefault:
+  EnforcedStyle: space
+  
+Style/SpaceInsideRangeLiteral:
+  Enabled: false
+
+Style/SymbolArray:
+  Enabled: true

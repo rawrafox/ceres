@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
 
-require 'pp'
-require 'simplecov'
+require "pp"
+require "simplecov"
 
 SimpleCov.start
 
-require 'ceres'
+require "ceres"
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
@@ -19,13 +21,11 @@ RSpec.configure do |config|
   config.shared_context_metadata_behavior = :apply_to_host_groups
 
   config.filter_run_when_matching :focus
-  config.example_status_persistence_file_path = 'spec/examples.txt'
+  config.example_status_persistence_file_path = "spec/examples.txt"
   config.disable_monkey_patching!
   config.warnings = true
 
-  if config.files_to_run.one?
-    config.default_formatter = 'doc'
-  end
+  config.default_formatter = "doc" if config.files_to_run.one?
 
   config.backtrace_exclusion_patterns << /sun\.reflect/
   config.backtrace_exclusion_patterns << /org\.jruby/

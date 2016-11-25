@@ -3,19 +3,27 @@
 module Ceres
   module Module
     def on_initialize(&block)
-      raise ArgumentError, 'multiple `on_initialize` blocks' if @_on_initialize
+      if instance_variable_defined?(:@_on_initialize)
+        raise ArgumentError, "multiple `on_initialize` blocks"
+      end
 
       @_on_initialize = block
     end
 
     def on_include(&block)
-      raise ArgumentError, 'multiple `on_include` blocks' if @_on_include
+      if instance_variable_defined?(:@_on_include)
+        raise ArgumentError, "multiple `on_include` blocks"
+      end
 
       @_on_include = block
     end
 
     def class_methods(&block)
-      mod = const_defined?(:ClassMethods, false) ? const_get(:ClassMethods) : const_set(:ClassMethods, ::Module.new)
+      mod = if const_defined?(:ClassMethods, false)
+        const_get(:ClassMethods)
+      else
+        const_set(:ClassMethods, ::Module.new)
+      end
 
       mod.module_eval(&block)
     end
@@ -43,9 +51,13 @@ module Ceres
         end
 
         if instance_variable_defined?(:@_on_initialize)
-          list = base.instance_variable_get(:@_on_initialize) || []
+          list = if base.instance_variable_defined?(:@_on_initialize)
+            base.instance_variable_get(:@_on_initialize)
+          else
+            []
+          end
 
-          if list.count == 0
+          if list.count.zero?
             base.class_eval do
               def self.new(*args)
                 super.tap do |obj|
@@ -59,7 +71,6 @@ module Ceres
           base.instance_variable_set(:@_on_initialize, list)
         end
       end
-      
     end
 
     def append_features(base) #:nodoc:
