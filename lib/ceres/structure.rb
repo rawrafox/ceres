@@ -3,7 +3,7 @@
 module Ceres
   class Structure
     def initialize(values = {})
-      @safe_structure_values = {}
+      @_structure_values = {}
 
       attributes = self.class.attributes
 
@@ -19,14 +19,14 @@ module Ceres
     end
 
     def self.define_attribute(name, kind, options)
-      # TODO: Remove this requirement by invalidating @safe_structure_attributes of all subclasses
-      @safe_structure_finalized ||= false
+      # TODO: Remove this requirement by invalidating @_structure_attributes of all subclasses
+      @_structure_finalized ||= false
 
-      raise ArgumentError, "safe structure is already finalized" if @safe_structure_finalized
+      raise ArgumentError, "safe structure is already finalized" if @_structure_finalized
 
-      @safe_structure_attributes ||= {}
+      @_structure_attributes ||= {}
 
-      raise ArgumentError, "attribute already defined" if @safe_structure_attributes.key?(name)
+      raise ArgumentError, "attribute already defined" if @_structure_attributes.key?(name)
 
       attribute = {
         kind: kind,
@@ -36,10 +36,10 @@ module Ceres
         setter: "#{name}=".to_sym
       }.merge(options)
 
-      @safe_structure_attributes[name] = attribute
+      @_structure_attributes[name] = attribute
 
       define_method(attribute[:getter]) do
-        @safe_structure_values[name]
+        @_structure_values[name]
       end
 
       define_method(attribute[:setter]) do |value|
@@ -60,7 +60,7 @@ module Ceres
                                "other type than #{attribute[:element_type]}"
         end
 
-        @safe_structure_values[name] = value
+        @_structure_values[name] = value
       end
 
       private attribute[:setter]
@@ -98,25 +98,25 @@ module Ceres
     end
 
     def self.attributes
-      @safe_structure_cached_attributes ||= begin
-        @safe_structure_finalized = true
-        @safe_structure_attributes ||= {}
+      @_structure_cached_attributes ||= begin
+        @_structure_finalized = true
+        @_structure_attributes ||= {}
 
         superclass = self.superclass
 
         if superclass < Ceres::Structure
           superclass_attributes = superclass.attributes
 
-          keys = (superclass_attributes.keys + @safe_structure_attributes.keys).uniq
+          keys = (superclass_attributes.keys + @_structure_attributes.keys).uniq
 
           keys.map do |key|
-            class_value = @safe_structure_attributes[key] || {}
+            class_value = @_structure_attributes[key] || {}
             superclass_value = superclass_attributes[key] || {}
 
             [key, superclass_value.merge(class_value)]
           end.to_h
         else
-          @safe_structure_attributes
+          @_structure_attributes
         end
       end
     end
@@ -124,9 +124,9 @@ module Ceres
     def self.equality(*attributes, eq: nil, eql: true, hash: true)
       raise ArgumentError, "need to provide at least one attribute" unless attributes.count > 0
 
-      @safe_structure_ordered ||= false
+      @_structure_ordered ||= false
 
-      if eq && @safe_structure_ordered
+      if eq && @_structure_ordered
         raise ArgumentError, "asking to overwrite `==` from order, probably not what you want"
       end
 
@@ -160,7 +160,7 @@ module Ceres
     def self.order(*attributes)
       raise ArgumentError, "need to provide at least one attribute" unless attributes.count > 0
 
-      @safe_structure_ordered = true
+      @_structure_ordered = true
 
       define_method(:<=>) do |other|
         raise ArgumentError, "not of the same class" unless self.class == other.class
