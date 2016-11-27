@@ -18,7 +18,7 @@ Lint/BlockAlignment:
   AlignWith: start_of_line
 
 Lint/EndAlignment:
-  AlignWith: start_of_line
+  AlignWith: variable
 
 Metrics/LineLength:
   Max: 100
@@ -45,10 +45,6 @@ Style/Documentation:
 
 Style/ElseAlignment:
   Enabled: false
-
-Style/EndAlignment:
-  Enabled: true
-  AlignWith: variable
 
 Style/FormatString:
   EnforcedStyle: percent
