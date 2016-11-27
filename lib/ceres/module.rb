@@ -32,7 +32,15 @@ module Ceres
       base.instance_variable_set(:@_module_dependencies, [])
     end
 
-    def add_features(base) #:nodoc:
+    def append_features(base) #:nodoc:
+      add_features(base) { super }
+    end
+
+    def prepend_features(base) #:nodoc:
+      raise NotImplementedError, 'prepend is not implemented'
+    end
+
+    private def add_features(base) #:nodoc:
       if base.instance_variable_defined?(:@_module_dependencies)
         base.instance_variable_get(:@_module_dependencies) << self
 
@@ -71,14 +79,6 @@ module Ceres
           base.instance_variable_set(:@_on_initialize, list)
         end
       end
-    end
-
-    def append_features(base) #:nodoc:
-      add_features(base) { super }
-    end
-
-    def prepend_features(base) #:nodoc:
-      add_features(base) { super }
     end
   end
 end

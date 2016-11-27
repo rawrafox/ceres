@@ -10,7 +10,9 @@ module ModuleSpec
       def a
         :a
       end
+    end
 
+    class_methods do
       def on_include_worked!
         @on_include = true
       end
@@ -80,10 +82,34 @@ module ModuleSpec
   end
 
   module D
+    extend Ceres::Module
+
+    class_methods do
+      def d
+        [:d, super]
+      end
+    end
+
     def d
       [:d, super]
     end
   end
+
+  # module E
+  #   extend Ceres::Module
+  #
+  #   prepend D
+  #
+  #   class_methods do
+  #     def d
+  #       :e
+  #     end
+  #   end
+  #
+  #   def d
+  #     :e
+  #   end
+  # end
 end
 
 RSpec.describe Ceres::Module do
@@ -140,15 +166,22 @@ RSpec.describe Ceres::Module do
     expect(@klass.included_modules[0..2]).to eq([ModuleSpec::C, ModuleSpec::B, ModuleSpec::A])
   end
 
-  it "prepends" do
-    @klass.prepend(ModuleSpec::D)
+  # it "prepends on classes" do
+  #   @klass.prepend(ModuleSpec::D)
+  #
+  #   @klass.class_eval do
+  #     def d
+  #       :e
+  #     end
+  #   end
+  #
+  #   expect(@klass.new.d).to eq(%i(d e))
+  # end
 
-    @klass.class_eval do
-      def d
-        :e
-      end
-    end
-
-    expect(@klass.new.d).to eq(%i(d e))
-  end
+  # it "prepends on modules" do
+  #   @klass.include(ModuleSpec::E)
+  #
+  #   expect(@klass.new.d).to eq(%i(d e))
+  #   expect(ModuleSpec::E.d).to eq(%i(d e))
+  # end
 end
