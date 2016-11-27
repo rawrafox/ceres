@@ -42,7 +42,7 @@ module Ceres
       when Symbol
         self.name == other.to_s
       else
-        false
+        raise ArgumentError, "comparing #{self.inspect} to #{other.inspect}, not compatible types"
       end
     end
 
