@@ -36,8 +36,8 @@ module Ceres
       add_features(base) { super }
     end
 
-    def prepend_features(base) #:nodoc:
-      raise NotImplementedError, 'prepend is not implemented'
+    def prepend_features(_) #:nodoc:
+      raise NotImplementedError, "prepend is not implemented"
     end
 
     private def add_features(base) #:nodoc:

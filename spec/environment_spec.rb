@@ -52,7 +52,7 @@ RSpec.describe Ceres::Environment do
 
     expect(a).to eq(b)
   end
-  
+
   it "does not compare to random stuff" do
     prd = Ceres.environment(environment: { "CERES_ENV" => "production" })
 
