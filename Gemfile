@@ -1,9 +1,10 @@
-source 'https://rubygems.org'
+# frozen_string_literal: true
 
-# Specify your gem's dependencies in safe_structure.gemspec
+source "https://rubygems.org"
+
 gemspec
 
 group :test do
-  gem 'rspec'
-  gem 'rubocop'
+  gem "rspec"
+  gem "rubocop"
 end
