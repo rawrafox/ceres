@@ -5,7 +5,9 @@ $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
 require "pp"
 require "simplecov"
 
-SimpleCov.start
+SimpleCov.start do
+  add_filter '/spec/'
+end
 
 require "ceres"
 
