@@ -39,4 +39,10 @@ RSpec.describe Ceres::Environment do
     expect(Ceres.environment(environment: {}).production?).to eq(false)
     expect(Ceres.environment(environment: { "CERES_ENV" => "production" }).production?).to eq(true)
   end
+
+  it "compares to symbols" do
+    prd = Ceres.environment(environment: { "CERES_ENV" => "production" })
+
+    expect(prd).to eq(:production)
+  end
 end

@@ -39,6 +39,8 @@ module Ceres
         self.name == other.name
       when String
         self.name == other
+      when Symbol
+        self.name == other.to_s
       else
         false
       end
