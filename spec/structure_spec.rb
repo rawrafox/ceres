@@ -2,6 +2,8 @@
 
 require "spec_helper"
 
+require "ceres/structure"
+
 module StructureSpec
   class A < Ceres::Structure
     attribute :a, type: String

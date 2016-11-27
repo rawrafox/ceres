@@ -2,6 +2,8 @@
 
 require "spec_helper"
 
+require "ceres/module"
+
 module ModuleSpec
   module A
     extend Ceres::Module

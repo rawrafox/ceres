@@ -2,6 +2,8 @@
 
 require "spec_helper"
 
+require "ceres/synchronized"
+
 module SynchronizedSpec
   class A
     include Ceres::Synchronized
