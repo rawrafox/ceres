@@ -64,6 +64,8 @@ module Ceres
       end
 
       private attribute[:setter]
+
+      attribute[:getter]
     end
 
     def self.attribute(name, type: nil, enum: nil, default: nil, optional: false, freeze: true)

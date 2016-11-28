@@ -34,6 +34,10 @@ module StructureSpec
   class F < Ceres::Structure
     array :a, element_type: String
   end
+  
+  class G < Ceres::Structure
+    private attribute :g, type: String
+  end
 end
 
 RSpec.describe Ceres::Structure do
@@ -179,6 +183,12 @@ RSpec.describe Ceres::Structure do
 
       expect(a == a).to be(true) # rubocop:disable Lint/UselessComparison
       expect(a != b).to be(true)
+    end
+  end
+
+  context "private" do
+    it "supports private attributes" do
+      expect { StructureSpec::G.new(g: "g").g }.to raise_error(NoMethodError)
     end
   end
 
