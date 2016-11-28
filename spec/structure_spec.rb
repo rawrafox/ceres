@@ -34,7 +34,7 @@ module StructureSpec
   class F < Ceres::Structure
     array :a, element_type: String
   end
-  
+
   class G < Ceres::Structure
     private attribute :g, type: String
   end
