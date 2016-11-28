@@ -43,4 +43,8 @@ RSpec.describe Ceres::Enum do
   it "supports Enumerable methods" do
     expect(EnumSpec::A.max).to eq(EnumSpec::A.c)
   end
+
+  it "supports include?" do
+    expect(EnumSpec::A.include?(EnumSpec::A.c))
+  end
 end
