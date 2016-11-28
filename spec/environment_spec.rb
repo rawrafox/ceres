@@ -58,4 +58,10 @@ RSpec.describe Ceres::Environment do
 
     expect { prd == 0 }.to raise_error(ArgumentError)
   end
+
+  it 'converts to string' do
+    prd = Ceres.environment(environment: { "CERES_ENV" => "production" })
+
+    expect(prd.to_s).to eq("production")
+  end
 end
