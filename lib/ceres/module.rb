@@ -32,11 +32,11 @@ module Ceres
       base.instance_variable_set(:@_module_dependencies, [])
     end
 
-    def append_features(base) #:nodoc:
+    private def append_features(base) #:nodoc:
       add_features(base) { super }
     end
 
-    def prepend_features(_) #:nodoc:
+    private def prepend_features(_) #:nodoc:
       raise NotImplementedError, "prepend is not implemented"
     end
 
