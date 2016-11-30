@@ -23,8 +23,23 @@ RSpec.describe Ceres::Enum do
     expect(EnumSpec::A.c.n).to eq(2)
   end
 
+  it "raises an error if multiple values with the same key are declared" do
+    expect do
+      Class.new(Ceres::Enum) do
+        attribute :n, type: Integer
+
+        value :a, n: 0
+        value :a, n: 1
+      end
+    end.to raise_error(ArgumentError)
+  end
+
   it "allows Structure methods" do
     expect(EnumSpec::A.a <=> EnumSpec::A.b).to eq(-1)
+  end
+
+  it "lists all keys" do
+    expect(EnumSpec::A.keys).to eq(%i(a b c))
   end
 
   it "lists all values" do

@@ -13,7 +13,11 @@ module Ceres
     def self.value(name, *arguments, &block)
       value = new(*arguments, &block)
 
-      @_enum[name] = value
+      if @_enum.key?(name)
+        raise ArgumentError, "key #{name} already in use"
+      else
+        @_enum[name] = value
+      end
 
       define_singleton_method(name) { value }
       define_method("#{name}?") { self.equal?(value) }
@@ -21,6 +25,10 @@ module Ceres
 
     def self.each(&block)
       @_enum.each_value(&block)
+    end
+
+    def self.keys
+      @_enum.keys
     end
 
     def self.values
