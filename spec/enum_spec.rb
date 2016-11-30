@@ -14,6 +14,22 @@ module EnumSpec
     value :b, n: 1
     value :c, n: 2
   end
+
+  class B < Ceres::Enum
+    attribute :n, type: Integer
+
+    value :a, n: 0 do
+      def a
+        :a
+      end
+    end
+
+    value :b, n: 1 do
+      def a
+        :b
+      end
+    end
+  end
 end
 
 RSpec.describe Ceres::Enum do
@@ -43,6 +59,7 @@ RSpec.describe Ceres::Enum do
   end
 
   it "lists all values" do
+    expect(EnumSpec::A.to_a).to eq([EnumSpec::A.a, EnumSpec::A.b, EnumSpec::A.c])
     expect(EnumSpec::A.values).to eq([EnumSpec::A.a, EnumSpec::A.b, EnumSpec::A.c])
   end
 
@@ -61,5 +78,10 @@ RSpec.describe Ceres::Enum do
 
   it "supports include?" do
     expect(EnumSpec::A.include?(EnumSpec::A.c))
+  end
+
+  it "allows you to add methods in the value block" do
+    expect(EnumSpec::B.a.a).to eq(:a)
+    expect(EnumSpec::B.b.a).to eq(:b)
   end
 end
