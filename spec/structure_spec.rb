@@ -117,6 +117,7 @@ RSpec.describe Ceres::Structure do
 
       expect(a).to eq(b)
       expect(a.hash).to eq(b.hash)
+      expect(a.eql?(b)).to eq(true)
     end
 
     it "does not compare equal if different classes" do
@@ -125,6 +126,7 @@ RSpec.describe Ceres::Structure do
 
       expect(a).not_to eq(b)
       expect(a.hash).not_to eq(b.hash)
+      expect(a.eql?(b)).to eq(false)
     end
 
     it "compares only the attributes defined" do
@@ -133,6 +135,7 @@ RSpec.describe Ceres::Structure do
 
       expect(a).to eq(b)
       expect(a.hash).to eq(b.hash)
+      expect(a.eql?(b)).to eq(true)
     end
   end
 
