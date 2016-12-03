@@ -82,31 +82,9 @@ module Ceres
         raise ArgumentError, "asking to overwrite `==` from order, probably not what you want"
       end
 
-      if eq.nil? || eq
-        define_method(:==) do |other|
-          return false unless self.class == other.class
-
-          attributes.all? do |attribute|
-            self.public_send(attribute) == other.public_send(attribute)
-          end
-        end
-      end
-
-      if eql
-        define_method(:eql?) do |other|
-          return false unless self.class == other.class
-
-          attributes.all? do |attribute|
-            self.public_send(attribute) == other.public_send(attribute)
-          end
-        end
-      end
-
-      if hash
-        define_method(:hash) do
-          self.class.hash ^ attributes.map(&:hash).reduce(&:'^')
-        end
-      end
+      define_eq(:==, attributes: attributes) if eq.nil? || eq
+      define_eq(:eql?, attributes: attributes) if eql
+      define_hash(:hash, attributes: attributes) if hash
     end
 
     def self.order(*attributes)
@@ -152,6 +130,22 @@ module Ceres
       define_setter(attribute)
 
       attribute[:getter]
+    end
+
+    private_class_method def self.define_eq(name, attributes:)
+      define_method(name) do |other|
+        return false unless self.class == other.class
+
+        attributes.all? do |attribute|
+          self.public_send(attribute).public_send(name, other.public_send(attribute))
+        end
+      end
+    end
+
+    private_class_method def self.define_hash(name, attributes:)
+      define_method(name) do
+        self.class.public_send(name) ^ attributes.map(&name).reduce(&:"^")
+      end
     end
 
     private_class_method def self.define_getter(attribute)
