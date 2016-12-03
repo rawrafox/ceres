@@ -21,6 +21,7 @@ module Ceres
     end
 
     on_initialize do
+      @mutex_n = 0
       @mutex = Mutex.new
     end
 
@@ -29,7 +30,11 @@ module Ceres
     end
 
     def synchronize(&block)
-      @mutex.synchronize(&block)
+      if @mutex.owned?
+        yield
+      else
+        @mutex.synchronize(&block)
+      end
     end
   end
 end

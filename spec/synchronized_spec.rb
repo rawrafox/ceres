@@ -22,6 +22,10 @@ module SynchronizedSpec
       @q1.push(:b)
       @q2.pop
     end
+
+    synchronized def c
+      a
+    end
   end
 end
 
@@ -50,6 +54,16 @@ RSpec.describe Ceres::Module do
     expect(@o.mutex.locked?).to_not be(true)
     @in.push(:b)
     expect(t.value).to be(:b)
+    expect(@o.mutex.locked?).to_not be(true)
+  end
+
+  it "allows recursive locking" do
+    expect(@o.mutex.locked?).to_not be(true)
+    t = Thread.new { @o.c }
+    expect(@out.pop).to be(:a)
+    expect(@o.mutex.locked?).to be(true)
+    @in.push(:a)
+    expect(t.value).to be(:a)
     expect(@o.mutex.locked?).to_not be(true)
   end
 end
