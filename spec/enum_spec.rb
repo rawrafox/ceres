@@ -33,6 +33,10 @@ module EnumSpec
 end
 
 RSpec.describe Ceres::Enum do
+  it "has a private constructor" do
+    expect { EnumSpec::A.new(n: 1) }.to raise_error(NoMethodError)
+  end
+
   it "initializes values" do
     expect(EnumSpec::A.a.n).to eq(0)
     expect(EnumSpec::A.b.n).to eq(1)

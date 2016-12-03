@@ -11,12 +11,6 @@ module Ceres
       def_delegators :@_enum, :count, :fetch, :keys, :size, :values
     end
 
-    def self.inherited(klass)
-      super
-
-      klass.instance_variable_set(:@_enum, {})
-    end
-
     def self.value(name, *arguments, &block)
       value = new(*arguments)
 
@@ -43,9 +37,16 @@ module Ceres
     def self.to_h
       @_enum
     end
+  end
 
-    private def initialize(*_)
+  # Ruby internals
+  class Enum
+    private_class_method def self.inherited(child)
       super
+
+      child.instance_variable_set(:@_enum, {})
     end
+
+    private_class_method :new
   end
 end
