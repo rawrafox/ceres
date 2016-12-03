@@ -12,6 +12,8 @@ module Ceres
     end
 
     def self.inherited(klass)
+      super
+
       klass.instance_variable_set(:@_enum, {})
     end
 

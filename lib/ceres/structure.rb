@@ -16,6 +16,12 @@ module Ceres
       attributes.each do |key, options|
         send(options[:setter], values.fetch(key) { options[:default] })
       end
+
+      self.class.send(:after_initialize_blocks).each { |block| self.instance_eval(&block) }
+    end
+
+    def self.after_initialize(&block)
+      @_structure_after_initialize << block
     end
 
     def self.attribute(name, type: nil, enum: nil, default: nil, optional: false, freeze: true)
@@ -52,7 +58,6 @@ module Ceres
     def self.attributes
       @_structure_cached_attributes ||= begin
         @_structure_finalized = true
-        @_structure_attributes ||= {}
 
         superclass = self.superclass
 
@@ -76,8 +81,6 @@ module Ceres
     def self.equality(*attributes, eq: nil, eql: true, hash: true)
       raise ArgumentError, "need to provide at least one attribute" unless attributes.count > 0
 
-      @_structure_ordered ||= false
-
       if eq && @_structure_ordered
         raise ArgumentError, "asking to overwrite `==` from order, probably not what you want"
       end
@@ -92,26 +95,34 @@ module Ceres
 
       @_structure_ordered = true
 
-      define_method(:<=>) do |other|
-        raise ArgumentError, "not of the same class" unless self.class == other.class
-
-        self_attributes = attributes.map { |attribute| self.public_send(attribute) }
-        other_attributes = attributes.map { |attribute| other.public_send(attribute) }
-
-        self_attributes <=> other_attributes
-      end
+      define_cmp(:<=>, attributes: attributes)
 
       include Comparable
     end
+  end
+
+  # Ruby internals
+  class Structure
+    private_class_method def self.inherited(child)
+      child.instance_variable_set(:@_structure_attributes, {})
+      child.instance_variable_set(:@_structure_finalized, false)
+      child.instance_variable_set(:@_structure_after_initialize, [])
+      child.instance_variable_set(:@_structure_ordered, false)
+    end
+  end
+
+  # Ceres internals
+  class Structure
+    private_class_method def self.after_initialize_blocks
+      self.ancestors.flat_map do |ancestor|
+        if ancestor.instance_variable_defined?(:@_structure_after_initialize)
+          ancestor.instance_variable_get(:@_structure_after_initialize)
+        end
+      end.compact
+    end
 
     private_class_method def self.define_attribute(name, kind, options)
-      # TODO: Remove this requirement by invalidating @_structure_attributes of all subclasses
-      @_structure_finalized ||= false
-
       raise ArgumentError, "safe structure is already finalized" if @_structure_finalized
-
-      @_structure_attributes ||= {}
-
       raise ArgumentError, "attribute already defined" if @_structure_attributes.key?(name)
 
       attribute = {
@@ -130,6 +141,17 @@ module Ceres
       define_setter(attribute)
 
       attribute[:getter]
+    end
+
+    private_class_method def self.define_cmp(name, attributes:)
+      define_method(name) do |other|
+        raise ArgumentError, "not of the same class" unless self.class == other.class
+
+        self_attributes = attributes.map { |attribute| self.public_send(attribute) }
+        other_attributes = attributes.map { |attribute| other.public_send(attribute) }
+
+        self_attributes.public_send(name, other_attributes)
+      end
     end
 
     private_class_method def self.define_eq(name, attributes:)

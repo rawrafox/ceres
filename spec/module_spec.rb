@@ -15,33 +15,33 @@ module ModuleSpec
     end
 
     class_methods do
-      def on_include_worked!
-        @on_include = true
+      def after_include_worked!
+        @after_include = true
       end
 
-      def on_include_worked?
-        @on_include
+      def after_include_worked?
+        @after_include
       end
     end
 
-    on_include do
-      on_include_worked!
+    after_include do
+      after_include_worked!
     end
 
-    on_initialize do
-      on_initialize_worked!
+    after_initialize do
+      after_initialize_worked!
     end
 
     def a
       :a
     end
 
-    def on_initialize_worked!
-      @on_initialize = true
+    def after_initialize_worked!
+      @after_initialize = true
     end
 
-    def on_initialize_worked?
-      @on_initialize
+    def after_initialize_worked?
+      @after_initialize
     end
   end
 
@@ -64,16 +64,16 @@ module ModuleSpec
       :b
     end
 
-    on_initialize do
-      on_initialize2_worked!
+    after_initialize do
+      after_initialize2_worked!
     end
 
-    def on_initialize2_worked!
-      @on_initialize2 = true
+    def after_initialize2_worked!
+      @after_initialize2 = true
     end
 
-    def on_initialize2_worked?
-      @on_initialize2
+    def after_initialize2_worked?
+      @after_initialize2
     end
   end
 
@@ -132,16 +132,16 @@ RSpec.describe Ceres::Module do
     expect((class << @klass; included_modules; end)[0]).to eq(ModuleSpec::A::ClassMethods)
   end
 
-  it "runs on_include" do
+  it "runs after_include" do
     @klass.include(ModuleSpec::A)
 
-    expect(@klass.on_include_worked?).to eq(true)
+    expect(@klass.after_include_worked?).to eq(true)
   end
 
-  it "runs on_initialize" do
+  it "runs after_initialize" do
     @klass.include(ModuleSpec::A)
 
-    expect(@klass.new.on_initialize_worked?).to eq(true)
+    expect(@klass.new.after_initialize_worked?).to eq(true)
   end
 
   it "includes dependencies" do
@@ -155,11 +155,11 @@ RSpec.describe Ceres::Module do
     expect(@klass.included_modules[0..1]).to eq([ModuleSpec::B, ModuleSpec::A])
   end
 
-  it "runs on_initialize in dependencies" do
+  it "runs after_initialize in dependencies" do
     @klass.include(ModuleSpec::B)
 
-    expect(@klass.new.on_initialize_worked?).to eq(true)
-    expect(@klass.new.on_initialize2_worked?).to eq(true)
+    expect(@klass.new.after_initialize_worked?).to eq(true)
+    expect(@klass.new.after_initialize2_worked?).to eq(true)
   end
 
   it "includes multiple dependencies" do

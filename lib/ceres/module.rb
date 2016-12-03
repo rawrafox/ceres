@@ -2,20 +2,20 @@
 
 module Ceres
   module Module
-    def on_initialize(&block)
-      if instance_variable_defined?(:@_on_initialize)
-        raise ArgumentError, "multiple `on_initialize` blocks"
+    def after_initialize(&block)
+      if instance_variable_defined?(:@_after_initialize)
+        raise ArgumentError, "multiple `after_initialize` blocks"
       end
 
-      @_on_initialize = block
+      @_after_initialize = block
     end
 
-    def on_include(&block)
-      if instance_variable_defined?(:@_on_include)
-        raise ArgumentError, "multiple `on_include` blocks"
+    def after_include(&block)
+      if instance_variable_defined?(:@_after_include)
+        raise ArgumentError, "multiple `after_include` blocks"
       end
 
-      @_on_include = block
+      @_after_include = block
     end
 
     def class_methods(&block)
@@ -54,13 +54,13 @@ module Ceres
 
         base.extend const_get(:ClassMethods) if const_defined?(:ClassMethods)
 
-        if instance_variable_defined?(:@_on_include)
-          base.class_eval(&@_on_include)
+        if instance_variable_defined?(:@_after_include)
+          base.class_eval(&@_after_include)
         end
 
-        if instance_variable_defined?(:@_on_initialize)
-          list = if base.instance_variable_defined?(:@_on_initialize)
-            base.instance_variable_get(:@_on_initialize)
+        if instance_variable_defined?(:@_after_initialize)
+          list = if base.instance_variable_defined?(:@_after_initialize)
+            base.instance_variable_get(:@_after_initialize)
           else
             []
           end
@@ -69,14 +69,14 @@ module Ceres
             base.class_eval do
               def self.new(*args)
                 super.tap do |obj|
-                  @_on_initialize.each { |block| obj.instance_eval(&block) }
+                  @_after_initialize.each { |block| obj.instance_eval(&block) }
                 end
               end
             end
           end
 
-          list << @_on_initialize
-          base.instance_variable_set(:@_on_initialize, list)
+          list << @_after_initialize
+          base.instance_variable_set(:@_after_initialize, list)
         end
       end
     end

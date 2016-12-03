@@ -20,12 +20,11 @@ module Ceres
       end
     end
 
-    on_initialize do
-      @mutex_n = 0
+    after_initialize do
       @mutex = Mutex.new
     end
 
-    on_include do
+    after_include do
       attr_reader :mutex
     end
 

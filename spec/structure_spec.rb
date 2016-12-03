@@ -9,6 +9,12 @@ module StructureSpec
     attribute :a, type: String
 
     order :a
+
+    attr_reader :after
+
+    after_initialize do
+      @after = 1
+    end
   end
 
   class B < Ceres::Structure
@@ -41,6 +47,12 @@ module StructureSpec
 end
 
 RSpec.describe Ceres::Structure do
+  context "after_initialize" do
+    it "runs the block" do
+      expect(StructureSpec::A.new(a: "a").after).to eq(1)
+    end
+  end
+
   context "attributes" do
     it "initializes attributes" do
       expect(StructureSpec::A.new(a: "a").a).to eq("a")
