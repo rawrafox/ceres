@@ -9,11 +9,10 @@ module Ceres
     equality :name, eq: false
 
     def self.current(environment: ENV)
-      return new(name: environment["CERES_ENV"]) if environment.key?("CERES_ENV")
-
       if defined?(Rails)
         new(name: Rails.env.to_s)
       else
+        return new(name: environment["CERES_ENV"]) if environment.key?("CERES_ENV")
         return new(name: environment["RACK_ENV"]) if environment.key?("RACK_ENV")
         return new(name: environment["RAILS_ENV"]) if environment.key?("RAILS_ENV")
 
