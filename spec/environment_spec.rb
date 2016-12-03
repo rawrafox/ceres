@@ -64,4 +64,10 @@ RSpec.describe Ceres::Environment do
 
     expect(prd.to_s).to eq("production")
   end
+
+  it "responds to production?" do
+    prd = Ceres.environment(environment: { "CERES_ENV" => "staging" })
+
+    expect(prd.respond_to?(:production?)).to eq(true)
+  end
 end
