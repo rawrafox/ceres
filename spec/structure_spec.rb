@@ -218,6 +218,26 @@ RSpec.describe Ceres::Structure do
     end
   end
 
+  context "subclassing" do
+    it "reopens classes" do
+      a = Class.new(Ceres::Structure) { attribute :a }
+      b = Class.new(a) { attribute :b }
+
+      a.instance_eval { attribute :c }
+
+      expect(a.attributes.keys).to eq(%i(a c))
+      expect(b.attributes.keys).to eq(%i(a c b))
+    end
+
+    it "raises when adding attributes added in subclasses" do
+      a = Class.new(Ceres::Structure) { attribute :a }
+
+      Class.new(a) { attribute :b }
+
+      expect { a.instance_eval { attribute :b } }.to raise_error(ArgumentError)
+    end
+  end
+
   context "type" do
     it "initializes attribute if value has correct type" do
       expect(StructureSpec::A.new(a: "a").a).to eq("a")

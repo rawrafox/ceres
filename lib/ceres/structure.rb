@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require "ceres/object"
+
+using Ceres::Object
+
 module Ceres
   class Structure
     def initialize(values = {})
@@ -25,13 +29,7 @@ module Ceres
     end
 
     def self.attribute(name, type: nil, enum: nil, default: nil, optional: false, freeze: true)
-      options = {
-        type: type,
-        enum: enum,
-        default: default,
-        optional: optional,
-        freeze: freeze
-      }
+      options = { type: type, enum: enum, default: default, optional: optional, freeze: freeze }
 
       define_attribute(name, :attribute, options)
     end
@@ -57,8 +55,6 @@ module Ceres
 
     def self.attributes
       @_structure_cached_attributes ||= begin
-        @_structure_finalized = true
-
         superclass = self.superclass
 
         if superclass < Ceres::Structure
@@ -99,14 +95,18 @@ module Ceres
 
       include Comparable
     end
+
+    def self.own_attributes
+      @_structure_attributes
+    end
   end
 
   # Ruby internals
   class Structure
     private_class_method def self.inherited(child)
       child.instance_variable_set(:@_structure_attributes, {})
-      child.instance_variable_set(:@_structure_finalized, false)
       child.instance_variable_set(:@_structure_after_initialize, [])
+      child.instance_variable_set(:@_structure_cached_attributes, nil)
       child.instance_variable_set(:@_structure_ordered, false)
     end
   end
@@ -122,7 +122,14 @@ module Ceres
     end
 
     private_class_method def self.define_attribute(name, kind, options)
-      raise ArgumentError, "safe structure is already finalized" if @_structure_finalized
+      self.descendants.each do |descendant|
+        if descendant.own_attributes.key?(name)
+          raise ArgumentError, "attribute already defined in subclass #{descendant}"
+        end
+
+        descendant.send(:invalidate_attributes)
+      end
+
       raise ArgumentError, "attribute already defined" if @_structure_attributes.key?(name)
 
       attribute = {
@@ -205,6 +212,10 @@ module Ceres
       end
 
       private attribute[:setter] unless attribute[:public_setter]
+    end
+
+    private_class_method def self.invalidate_attributes
+      @_structure_cached_attributes = nil
     end
   end
 end
