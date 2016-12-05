@@ -14,6 +14,13 @@ RSpec.configure do |config|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end
 
+  if defined? JRUBY_VERSION
+    config.filter_run_excluding refinements: true
+
+    config.backtrace_exclusion_patterns << /sun\.reflect/
+    config.backtrace_exclusion_patterns << /org\.jruby/
+  end
+
   config.mock_with :rspec do |mocks|
     mocks.verify_partial_doubles = true
   end
@@ -26,9 +33,6 @@ RSpec.configure do |config|
   config.warnings = true
 
   config.default_formatter = "doc" if config.files_to_run.one?
-
-  config.backtrace_exclusion_patterns << /sun\.reflect/
-  config.backtrace_exclusion_patterns << /org\.jruby/
 
   config.profile_examples = 10
 

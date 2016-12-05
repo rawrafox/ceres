@@ -2,8 +2,6 @@
 
 require "ceres/object"
 
-using Ceres::Object
-
 module Ceres
   class Structure
     def initialize(values = {})
@@ -122,7 +120,7 @@ module Ceres
     end
 
     private_class_method def self.define_attribute(name, kind, options)
-      self.descendants.each do |descendant|
+      Ceres::Object.descendants_of(self).each do |descendant|
         if descendant.own_attributes.key?(name)
           raise ArgumentError, "attribute already defined in subclass #{descendant}"
         end

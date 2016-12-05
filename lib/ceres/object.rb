@@ -2,9 +2,13 @@
 
 module Ceres
   module Object
+    def self.descendants_of(klass)
+      ObjectSpace.each_object(klass.singleton_class).select { |k| k != klass }
+    end
+
     refine ::Object do
       def descendants
-        ObjectSpace.each_object(singleton_class).select { |k| k != self }
+        Ceres::Object.descendants_of(self)
       end
     end
   end
