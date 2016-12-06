@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "ceres/object"
+require "ceres/refinements/object"
 
 module Ceres
   class Structure

@@ -4,7 +4,7 @@ require "set"
 
 require "spec_helper"
 
-require "ceres/environment"
+require "ceres/refinements/object"
 
 RSpec.describe Ceres::Object do
   before do
