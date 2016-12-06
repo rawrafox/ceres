@@ -27,7 +27,10 @@ module Ceres
 
       mod.module_eval(&block)
     end
+  end
 
+  # Ruby internals
+  module Module
     def self.extended(base) #:nodoc:
       base.instance_variable_set(:@_module_dependencies, [])
     end
@@ -39,7 +42,10 @@ module Ceres
     private def prepend_features(_) #:nodoc:
       raise NotImplementedError, "prepend is not implemented"
     end
+  end
 
+  # Ceres internals
+  module Module
     private def add_features(base) #:nodoc:
       if base.instance_variable_defined?(:@_module_dependencies)
         base.instance_variable_get(:@_module_dependencies) << self
@@ -54,29 +60,38 @@ module Ceres
 
         base.extend const_get(:ClassMethods) if const_defined?(:ClassMethods)
 
-        if instance_variable_defined?(:@_after_include)
-          base.class_eval(&@_after_include)
+        add_after_include(base)
+        add_after_initialize(base)
+      end
+    end
+
+    private def add_after_include(base)
+      if instance_variable_defined?(:@_after_include)
+        base.class_eval(&@_after_include)
+      end
+    end
+
+    private def add_after_initialize(base)
+      if instance_variable_defined?(:@_after_initialize)
+        list = if base.instance_variable_defined?(:@_after_initialize)
+          base.instance_variable_get(:@_after_initialize)
+        else
+          []
         end
 
-        if instance_variable_defined?(:@_after_initialize)
-          list = if base.instance_variable_defined?(:@_after_initialize)
-            base.instance_variable_get(:@_after_initialize)
-          else
-            []
-          end
+        override_new(base) if list.count.zero?
 
-          if list.count.zero?
-            base.class_eval do
-              def self.new(*args)
-                super.tap do |obj|
-                  @_after_initialize.each { |block| obj.instance_eval(&block) }
-                end
-              end
-            end
-          end
+        list << @_after_initialize
+        base.instance_variable_set(:@_after_initialize, list)
+      end
+    end
 
-          list << @_after_initialize
-          base.instance_variable_set(:@_after_initialize, list)
+    private def override_new(base)
+      base.class_eval do
+        def self.new(*args)
+          super.tap do |obj|
+            @_after_initialize.each { |block| obj.instance_eval(&block) }
+          end
         end
       end
     end
