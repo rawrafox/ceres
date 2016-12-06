@@ -7,5 +7,7 @@ require "ceres/environment"
 require "ceres/module"
 require "ceres/structure"
 require "ceres/synchronized"
+require "ceres/verify"
 
+require "ceres/refinements/enumeration"
 require "ceres/refinements/object"

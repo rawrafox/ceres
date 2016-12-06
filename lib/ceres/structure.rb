@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "ceres/refinements/enumeration"
 require "ceres/refinements/object"
 
 module Ceres
@@ -191,20 +192,9 @@ module Ceres
       define_method(attribute[:setter]) do |value|
         value.freeze if attribute[:freeze]
 
-        if attribute[:type] && !value.is_a?(attribute[:type])
-          raise ArgumentError, "attribute #{attribute[:name]} (#{value.inspect}) is not of type " \
-                               "#{attribute[:type].name}"
-        end
+        args = Ceres::Enumeration.only(attribute, :type, :types, :enum, :element_type)
 
-        if attribute[:enum] && !attribute[:enum].include?(value)
-          raise ArgumentError, "attribute #{attribute[:name]} (#{value.inspect}) is not one of " \
-                               "#{attribute[:enum].map(&:inspect).join(', ')}"
-        end
-
-        if attribute[:element_type] && !value.all? { |x| x.is_a?(attribute[:element_type]) }
-          raise ArgumentError, "attribute #{attribute[:name]} (#{value.inspect}) has elements of " \
-                               "other type than #{attribute[:element_type]}"
-        end
+        Ceres::Verify.verify value, **args
 
         @_structure_values[name] = value
       end
