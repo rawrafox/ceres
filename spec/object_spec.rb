@@ -14,18 +14,18 @@ RSpec.describe Ceres::Object do
     @d = Class.new(@b)
   end
 
-  it "calculates descendants_of" do
-    expect(Ceres::Object.descendants_of(@a).to_set).to eq([@b, @c, @d].to_set)
-    expect(Ceres::Object.descendants_of(@b).to_set).to eq([@c, @d].to_set)
-    expect(Ceres::Object.descendants_of(@c).to_set).to eq([].to_set)
-    expect(Ceres::Object.descendants_of(@d).to_set).to eq([].to_set)
+  it "calculates descendants" do
+    expect(Ceres::Object.descendants(@a).to_set).to eq([@b, @c, @d].to_set)
+    expect(Ceres::Object.descendants(@b).to_set).to eq([@c, @d].to_set)
+    expect(Ceres::Object.descendants(@c).to_set).to eq([].to_set)
+    expect(Ceres::Object.descendants(@d).to_set).to eq([].to_set)
   end
 
-  it "calculates direct descendants_of" do
-    expect(Ceres::Object.descendants_of(@a, only_direct: true).to_set).to eq([@b].to_set)
-    expect(Ceres::Object.descendants_of(@b, only_direct: true).to_set).to eq([@c, @d].to_set)
-    expect(Ceres::Object.descendants_of(@c, only_direct: true).to_set).to eq([].to_set)
-    expect(Ceres::Object.descendants_of(@d, only_direct: true).to_set).to eq([].to_set)
+  it "calculates direct descendants" do
+    expect(Ceres::Object.descendants(@a, only_direct: true).to_set).to eq([@b].to_set)
+    expect(Ceres::Object.descendants(@b, only_direct: true).to_set).to eq([@c, @d].to_set)
+    expect(Ceres::Object.descendants(@c, only_direct: true).to_set).to eq([].to_set)
+    expect(Ceres::Object.descendants(@d, only_direct: true).to_set).to eq([].to_set)
   end
 
   using Ceres::Object

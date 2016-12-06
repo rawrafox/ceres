@@ -33,7 +33,7 @@ module Ceres
     end
 
     def self.array(name,
-                   type: Array,
+                   type: ::Array,
                    element_type: nil,
                    enum: nil,
                    default: nil,
@@ -120,7 +120,7 @@ module Ceres
     end
 
     private_class_method def self.define_attribute(name, kind, options)
-      Ceres::Object.descendants_of(self).each do |descendant|
+      Ceres::Object.descendants(self).each do |descendant|
         if descendant.own_attributes.key?(name)
           raise ArgumentError, "attribute already defined in subclass #{descendant}"
         end
