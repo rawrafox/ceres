@@ -199,17 +199,6 @@ RSpec.describe Ceres::Structure do
       expect(a == a).to be(true) # rubocop:disable Lint/UselessComparison
       expect(a != b).to be(true)
     end
-
-    it "raises an error when `==` is overriden by equality" do
-      expect do
-        Class.new(Ceres::Structure) do
-          attribute :a
-
-          order :a
-          equality :a, eq: true
-        end
-      end.to raise_error(ArgumentError)
-    end
   end
 
   context "private" do

@@ -73,20 +73,16 @@ module Ceres
       end
     end
 
-    def self.equality(*attributes, eq: nil, eql: true, hash: true)
-      raise ArgumentError, "need to provide at least one attribute" unless attributes.count > 0
+    def self.equality(*attributes, eq: true, eql: true, hash: true)
+      Ceres.verify(attributes, minimum_count: 1)
 
-      if eq && @_structure_ordered
-        raise ArgumentError, "asking to overwrite `==` from order, probably not what you want"
-      end
-
-      define_eq(:==, attributes: attributes) if eq.nil? || eq
+      define_eq(:==, attributes: attributes) if eq
       define_eq(:eql?, attributes: attributes) if eql
       define_hash(:hash, attributes: attributes) if hash
     end
 
     def self.order(*attributes)
-      raise ArgumentError, "need to provide at least one attribute" unless attributes.count > 0
+      Ceres.verify(attributes, minimum_count: 1)
 
       @_structure_ordered = true
 
@@ -121,15 +117,9 @@ module Ceres
     end
 
     private_class_method def self.define_attribute(name, kind, options)
-      Ceres::Object.descendants(self).each do |descendant|
-        if descendant.own_attributes.key?(name)
-          raise ArgumentError, "attribute already defined in subclass #{descendant}"
-        end
+      validate_uniqueness(name)
 
-        descendant.send(:invalidate_attributes)
-      end
-
-      raise ArgumentError, "attribute already defined" if @_structure_attributes.key?(name)
+      invalidate_attributes(recursive: true)
 
       attribute = {
         kind: kind,
@@ -192,9 +182,9 @@ module Ceres
       define_method(attribute[:setter]) do |value|
         value.freeze if attribute[:freeze]
 
-        args = Ceres::Enumeration.only(attribute, :type, :types, :enum, :element_type)
+        args = Ceres::Enumeration.only(attribute, *Ceres::Verify::PARAMS)
 
-        Ceres::Verify.verify value, **args
+        Ceres.verify(value, **args)
 
         @_structure_values[name] = value
       end
@@ -202,8 +192,22 @@ module Ceres
       private attribute[:setter] unless attribute[:public_setter]
     end
 
-    private_class_method def self.invalidate_attributes
+    private_class_method def self.invalidate_attributes(recursive: false)
       @_structure_cached_attributes = nil
+
+      if recursive
+        Ceres::Object.descendants(self).each do |descendant|
+          descendant.send(:invalidate_attributes)
+        end
+      end
+    end
+
+    private_class_method def self.validate_uniqueness(name)
+      Ceres::Object.descendants(self, include_self: true).each do |descendant|
+        if descendant.own_attributes.key?(name)
+          raise ArgumentError, "attribute already defined in #{descendant}"
+        end
+      end
     end
   end
 end

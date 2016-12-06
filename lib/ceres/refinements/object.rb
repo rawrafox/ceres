@@ -7,11 +7,11 @@ module Ceres
   module Object
     include Ceres::Verify
 
-    def self.descendants(this, only_direct: false)
+    def self.descendants(this, only_direct: false, include_self: false)
       verify this, type: ::Class
 
       descendants = ObjectSpace.each_object(this.singleton_class)
-      descendants = Ceres::Enumeration.without(descendants, this)
+      descendants = Ceres::Enumeration.without(descendants, this) unless include_self
 
       if only_direct
         descendants.reject { |k| descendants.any? { |c| k < c } }
