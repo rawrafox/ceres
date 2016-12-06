@@ -2,23 +2,19 @@
 
 module Ceres
   module Object
-    def self.descendants_of(klass)
-      ObjectSpace.each_object(klass.singleton_class).select { |k| k != klass }
-    end
+    def self.descendants_of(klass, only_direct: false)
+      descendants = ObjectSpace.each_object(klass.singleton_class).reject { |k| k == klass }
 
-    def self.direct_descendants_of(klass)
-      descendants = self.descendants_of(klass)
-
-      descendants.reject { |k| descendants.any? { |c| c > k } }
+      if only_direct
+        descendants.reject { |k| descendants.any? { |c| k < c } }
+      else
+        descendants
+      end
     end
 
     refine ::Object do
-      def descendants
-        Ceres::Object.descendants_of(self)
-      end
-
-      def direct_descendants
-        Ceres::Object.direct_descendants_of(self)
+      def descendants(only_direct: false)
+        Ceres::Object.descendants_of(self, only_direct: only_direct)
       end
     end
   end
