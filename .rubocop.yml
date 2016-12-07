@@ -2,15 +2,6 @@ AllCops:
   DisplayCopNames: true
   TargetRubyVersion: 2.2
 
-Metrics/AbcSize:
-  Enabled: false
-
-Metrics/CyclomaticComplexity:
-  Enabled: true
-  
-Metrics/PerceivedComplexity:
-  Enabled: false
-
 Lint/AssignmentInCondition:
   AllowSafeAssignment: false
 
