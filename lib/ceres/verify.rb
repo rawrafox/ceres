@@ -17,7 +17,10 @@ module Ceres
       verify_type(value, type)
       verify_types(value, types)
     end
+  end
 
+  # Ceres internals
+  module Verify
     private_class_method def self.verify_element_type(value, element_type)
       return unless element_type
 
