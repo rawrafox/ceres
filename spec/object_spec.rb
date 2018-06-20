@@ -1,46 +1,64 @@
 # frozen_string_literal: true
 
-require "set"
-
 require "spec_helper"
 
-require "ceres/refinements/object"
+require "ceres/object"
 
 RSpec.describe Ceres::Object do
-  before do
-    @a = Class.new
-    @b = Class.new(@a)
-    @c = Class.new(@b)
-    @d = Class.new(@b)
+  context "attribute" do
+    it "can add an attribute" do
+      c = Class.new(Ceres::Object) do
+        attribute :name do
+          variable :@xyz
+          reader { @xyz + "!" }
+          writer { |v| v.gsub(/!/, "") }
+        end
+      end
+
+      o = c.new
+      o.name = "Aria!!!!!"
+      expect(o.instance_variable_get(:@xyz)).to eq("Aria")
+      expect(o.name).to eq("Aria!")
+    end
+
+    it "can list attributes" do
+      c = Class.new(Ceres::Object) do
+        attribute :a
+        attribute :b
+      end
+
+      expect(c.attributes.map(&:name)).to eq([:a, :b])
+    end
+
+    it "can list inherited attributes" do
+      c1 = Class.new(Ceres::Object) do
+        attribute :b
+      end
+
+      c2 = Class.new(c1) do
+        attribute :a
+      end
+
+      expect(c2.attributes.map(&:name)).to eq([:a, :b])
+    end
   end
 
-  it "calculates descendants" do
-    expect(Ceres::Object.descendants(@a).to_set).to eq([@b, @c, @d].to_set)
-    expect(Ceres::Object.descendants(@b).to_set).to eq([@c, @d].to_set)
-    expect(Ceres::Object.descendants(@c).to_set).to eq([].to_set)
-    expect(Ceres::Object.descendants(@d).to_set).to eq([].to_set)
-  end
+  context "inspect" do
+    it "works on empty object" do
+      c = Class.new(Ceres::Object)
+      o = c.new
 
-  it "calculates direct descendants" do
-    expect(Ceres::Object.descendants(@a, only_direct: true).to_set).to eq([@b].to_set)
-    expect(Ceres::Object.descendants(@b, only_direct: true).to_set).to eq([@c, @d].to_set)
-    expect(Ceres::Object.descendants(@c, only_direct: true).to_set).to eq([].to_set)
-    expect(Ceres::Object.descendants(@d, only_direct: true).to_set).to eq([].to_set)
-  end
+      expect(o.inspect).to eq(sprintf("#<%p:%0#18x>", c, o.object_id << 1))
+    end
 
-  using Ceres::Object
+    it "works on an object with attributes" do
+      c = Class.new(Ceres::Object) do
+        attribute :name
+      end
 
-  it "calculates descendants", refinements: true do
-    expect(@a.descendants.to_set).to eq([@b, @c, @d].to_set)
-    expect(@b.descendants.to_set).to eq([@c, @d].to_set)
-    expect(@c.descendants.to_set).to eq([].to_set)
-    expect(@d.descendants.to_set).to eq([].to_set)
-  end
+      o = c.new
 
-  it "calculates direct_descendants", refinements: true do
-    expect(@a.descendants(only_direct: true).to_set).to eq([@b].to_set)
-    expect(@b.descendants(only_direct: true).to_set).to eq([@c, @d].to_set)
-    expect(@c.descendants(only_direct: true).to_set).to eq([].to_set)
-    expect(@d.descendants(only_direct: true).to_set).to eq([].to_set)
+      expect(o.inspect).to eq(sprintf("#<%p:%0#18x name: nil>", c, o.object_id << 1))
+    end
   end
 end

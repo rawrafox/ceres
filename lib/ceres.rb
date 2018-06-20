@@ -2,12 +2,8 @@
 
 require "ceres/version"
 
-require "ceres/enum"
-require "ceres/environment"
-require "ceres/module"
-require "ceres/structure"
-require "ceres/synchronized"
-require "ceres/verify"
+require "ceres/attribute"
+require "ceres/object"
+require "ceres/reader"
+require "ceres/writer"
 
-require "ceres/refinements/enumeration"
-require "ceres/refinements/object"

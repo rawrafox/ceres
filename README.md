@@ -1,6 +1,6 @@
 # Ceres #
 
-[![Build Status](https://travis-ci.org/rawrasaur/ceres.svg?branch=master)](https://travis-ci.org/rawrasaur/ceres)
+[![Build Status](https://travis-ci.org/aventine-softworks/ceres.svg?branch=master)](https://travis-ci.org/aventine-softworks/ceres)
 
 Ceres is a gem that extends the Ruby standard library with some cool new features, but it doesn't monkey patch anything or break anything you already have, so just require what you want or go all in with `require 'ceres'`. The main features are mostly immutable type safe classes, synchronized objects, notification centers, and thread pools.
 
@@ -22,36 +22,6 @@ And then execute:
 Or install it yourself as:
 
     $ gem install ceres
-
-
-## Structure ##
-
-If you wanted to define a cookie class, you could do it as follows and then Ceres would verify the types and enums.
-
-```ruby
-require 'ceres/structure'
-
-class Cookie < Ceres::Structure
-  attribute :name, type: String
-  attribute :type, enum: [:chocolate_chip, :almond, :anzac]
-  attribute :niceness, type: Fixnum, default: 11
-  
-  array :ingredients
-end
-
-Cookie.new(name: 'Best Cookie', type: :chocolate_chip)
-```
-
-The valid options are as follows
-
- - type: limits value to certain class
- - enum: limits value to certain values
- - default: sets default
- - optional: value can be nil
- - element_type: elements limited to certain class
-
-
-`array` is just a shorthand for setting type to `Array`.
 
 
 ## Development ##

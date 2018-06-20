@@ -12,12 +12,13 @@ Gem::Specification.new do |spec|
   spec.authors = ["Aurora"]
   spec.email = ["aurora@aventine.se"]
 
-  spec.summary = "An extension to the ruby standard library."
+  spec.summary = " A collection of useful things"
   spec.homepage = "https://github.com/rawrasaur/ceres"
 
   spec.files = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
   end
+
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
