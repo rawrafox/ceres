@@ -14,6 +14,7 @@ Gem::Specification.new do |spec|
 
   spec.summary = " A collection of useful things"
   spec.homepage = "https://github.com/rawrasaur/ceres"
+  spec.license = "MIT"
 
   spec.files = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
