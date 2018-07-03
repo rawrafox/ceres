@@ -39,6 +39,7 @@ RSpec.describe Ceres::Object do
         attribute :a
       end
 
+      expect(c1.attributes.map(&:name)).to eq([:b])
       expect(c2.attributes.map(&:name)).to eq([:a, :b])
     end
   end

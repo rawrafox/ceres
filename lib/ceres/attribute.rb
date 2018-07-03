@@ -3,6 +3,38 @@ require "ceres/writer"
 require "ceres/inspector"
 
 module Ceres
+  module AttributeModule
+    def self.included(base)
+      base.extend(Singleton)
+    end
+
+    module Singleton
+      def attribute(name, &block)
+        attribute = Ceres::Attribute.new(name, &block)
+        attribute.apply(self)
+
+        @attributes ||= []
+        @attributes << attribute
+      end
+
+      def attributes(all: true)
+        if all
+          self.ancestors.flat_map do |ancestor|
+            if ancestor.respond_to?(:attributes)
+              ancestor.attributes(all: false)
+            else
+              []
+            end
+          end
+        elsif defined?(@attributes)
+          @attributes
+        else
+          []
+        end
+      end
+    end
+  end
+
   class Attribute
     attr_reader :name
 

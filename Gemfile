@@ -8,5 +8,5 @@ group :test do
   gem "rake"
   gem "rspec"
   gem "rubocop"
-  gem "simplecov"
+  gem "deep-cover"
 end

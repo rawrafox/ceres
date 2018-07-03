@@ -2,6 +2,8 @@
 
 require "spec_helper"
 
+require "ostruct"
+
 require "ceres/writer"
 
 RSpec.describe Ceres::Writer do
