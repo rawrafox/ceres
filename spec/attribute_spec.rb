@@ -101,8 +101,6 @@ RSpec.describe Ceres::Attribute do
       o1.instance_variable_set(:@abc, o2)
       o1.name = "abc"
 
-      pp o1.instance_variables
-
       expect(o2.name).to eq("abc")
     end
   end
